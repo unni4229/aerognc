@@ -64,6 +64,23 @@ def main():
         f"{aircraft.max_thrust:.3f} N"
     )
 
+    print("\nDynamic damping")
+
+    print(
+        f"Cl_p            : "
+        f"{aircraft.Cl_p}"
+    )
+
+    print(
+        f"Cm_q            : "
+        f"{aircraft.Cm_q}"
+    )
+
+    print(
+        f"Cn_r            : "
+        f"{aircraft.Cn_r}"
+    )
+
     print("\nConfiguration loaded successfully.")
 
 

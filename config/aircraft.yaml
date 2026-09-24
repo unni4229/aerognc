@@ -18,6 +18,7 @@ geometry:
 aerodynamics:
 
   longitudinal:
+
     CL0: 0.28
     CL_alpha: 4.8
     CL_delta_e: -0.35
@@ -30,15 +31,26 @@ aerodynamics:
     Cm_alpha: -0.85
     Cm_delta_e: -1.10
 
+    # Pitch-rate damping derivative
+    Cm_q: -8.0
+
   lateral:
+
     CY_beta: -0.30
     CY_delta_r: 0.15
 
     Cl_beta: -0.08
     Cl_delta_a: 0.08
 
+    # Roll-rate damping derivative
+    Cl_p: -0.45
+
     Cn_beta: 0.15
     Cn_delta_r: -0.06
 
+    # Yaw-rate damping derivative
+    Cn_r: -0.25
+
 propulsion:
+
   max_thrust: 45.0

@@ -1,3 +1,7 @@
+"""
+AeroGNC aircraft configuration loader.
+"""
+
 from pathlib import Path
 
 import yaml
@@ -9,15 +13,23 @@ def load_aircraft_parameters(
     filepath: str | Path,
 ) -> AircraftParameters:
     """
-    Load aircraft parameters from a YAML file.
+    Load aircraft parameters from aircraft.yaml.
     """
 
     filepath = Path(filepath)
+
+    # ---------------------------------------------------------
+    # Check configuration file
+    # ---------------------------------------------------------
 
     if not filepath.exists():
         raise FileNotFoundError(
             f"Aircraft configuration not found: {filepath}"
         )
+
+    # ---------------------------------------------------------
+    # Read YAML
+    # ---------------------------------------------------------
 
     with filepath.open(
         "r",
@@ -28,32 +40,73 @@ def load_aircraft_parameters(
 
     if not isinstance(data, dict):
         raise ValueError(
-            "Aircraft configuration must contain a YAML mapping."
+            "Aircraft configuration must be a YAML mapping."
         )
 
+    # ---------------------------------------------------------
+    # Extract sections
+    # ---------------------------------------------------------
+
     inertia = data["inertia"]
+
     geometry = data["geometry"]
 
-    aero = data["aerodynamics"]
-    longitudinal = aero["longitudinal"]
-    lateral = aero["lateral"]
+    aerodynamics = data["aerodynamics"]
+
+    longitudinal = aerodynamics["longitudinal"]
+
+    lateral = aerodynamics["lateral"]
 
     propulsion = data["propulsion"]
 
+    # ---------------------------------------------------------
+    # Create AircraftParameters
+    # ---------------------------------------------------------
+
     return AircraftParameters(
 
-        name=data["name"],
+        # =====================================================
+        # Basic properties
+        # =====================================================
 
-        mass=float(data["mass"]),
-
-        gravity=float(
-            data.get("gravity", 9.81)
+        name=str(
+            data["name"]
         ),
 
-        Ixx=float(inertia["Ixx"]),
-        Iyy=float(inertia["Iyy"]),
-        Izz=float(inertia["Izz"]),
-        Ixz=float(inertia["Ixz"]),
+        mass=float(
+            data["mass"]
+        ),
+
+        gravity=float(
+            data.get(
+                "gravity",
+                9.81,
+            )
+        ),
+
+        # =====================================================
+        # Inertia
+        # =====================================================
+
+        Ixx=float(
+            inertia["Ixx"]
+        ),
+
+        Iyy=float(
+            inertia["Iyy"]
+        ),
+
+        Izz=float(
+            inertia["Izz"]
+        ),
+
+        Ixz=float(
+            inertia["Ixz"]
+        ),
+
+        # =====================================================
+        # Geometry
+        # =====================================================
 
         wing_area=float(
             geometry["wing_area"]
@@ -67,6 +120,10 @@ def load_aircraft_parameters(
             geometry["mean_chord"]
         ),
 
+        # =====================================================
+        # Lift
+        # =====================================================
+
         CL0=float(
             longitudinal["CL0"]
         ),
@@ -78,6 +135,10 @@ def load_aircraft_parameters(
         CL_delta_e=float(
             longitudinal["CL_delta_e"]
         ),
+
+        # =====================================================
+        # Drag
+        # =====================================================
 
         CD0=float(
             longitudinal["CD0"]
@@ -91,6 +152,10 @@ def load_aircraft_parameters(
             longitudinal["CD_alpha2"]
         ),
 
+        # =====================================================
+        # Pitching moment
+        # =====================================================
+
         Cm0=float(
             longitudinal["Cm0"]
         ),
@@ -103,6 +168,18 @@ def load_aircraft_parameters(
             longitudinal["Cm_delta_e"]
         ),
 
+        # =====================================================
+        # NEW: pitch-rate damping
+        # =====================================================
+
+        Cm_q=float(
+            longitudinal["Cm_q"]
+        ),
+
+        # =====================================================
+        # Side force
+        # =====================================================
+
         CY_beta=float(
             lateral["CY_beta"]
         ),
@@ -110,6 +187,10 @@ def load_aircraft_parameters(
         CY_delta_r=float(
             lateral["CY_delta_r"]
         ),
+
+        # =====================================================
+        # Rolling moment
+        # =====================================================
 
         Cl_beta=float(
             lateral["Cl_beta"]
@@ -119,6 +200,18 @@ def load_aircraft_parameters(
             lateral["Cl_delta_a"]
         ),
 
+        # =====================================================
+        # NEW: roll-rate damping
+        # =====================================================
+
+        Cl_p=float(
+            lateral["Cl_p"]
+        ),
+
+        # =====================================================
+        # Yawing moment
+        # =====================================================
+
         Cn_beta=float(
             lateral["Cn_beta"]
         ),
@@ -126,6 +219,18 @@ def load_aircraft_parameters(
         Cn_delta_r=float(
             lateral["Cn_delta_r"]
         ),
+
+        # =====================================================
+        # NEW: yaw-rate damping
+        # =====================================================
+
+        Cn_r=float(
+            lateral["Cn_r"]
+        ),
+
+        # =====================================================
+        # Propulsion
+        # =====================================================
 
         max_thrust=float(
             propulsion["max_thrust"]
